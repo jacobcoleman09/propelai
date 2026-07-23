@@ -19,10 +19,13 @@ Analyze this business idea and respond with JSON in exactly this shape:
   "strengths": ["strength 1", "strength 2", "strength 3"],
   "weaknesses": ["weakness 1", "weakness 2", "weakness 3"],
   "competitiveRisks": ["risk 1", "risk 2"],
-  "nextSteps": ["step 1", "step 2", "step 3"]
+  "nextSteps": ["step 1", "step 2", "step 3"],
+  "actionItems": ["the most immediate action item 1", "action item 2"]
 }
 
-Each bullet should be specific to this idea and market, not generic startup advice.`
+"nextSteps" should be the broader strategic path forward. "actionItems" should be the 2-3 most
+immediate, concrete things the founder should do this week. Each bullet should be specific to
+this idea and market, not generic startup advice.`
 
   try {
     const completion = await openai.chat.completions.create({

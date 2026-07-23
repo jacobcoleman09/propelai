@@ -19,12 +19,15 @@ Target company: ${targetCompany || 'Not specified'}
 Write an ATS-optimized resume and a matching cover letter for this candidate and target job.
 Also give 3-5 specific, actionable notes on how the candidate could strengthen their materials
 or experience for this role (things like missing keywords, weak bullet points, gaps to address).
+Finally, give 2-3 concrete action items the candidate should do next (e.g. specific things to
+add to their resume, people to reach out to, skills to pick up).
 
 Respond with JSON in exactly this shape:
 {
   "resume": "the full resume as plain text, with clear section headers",
   "coverLetter": "the full cover letter as plain text",
-  "improvementNotes": ["note 1", "note 2", "note 3"]
+  "improvementNotes": ["note 1", "note 2", "note 3"],
+  "actionItems": ["action item 1", "action item 2"]
 }`
 
   try {

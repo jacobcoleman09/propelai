@@ -4,6 +4,7 @@ import { addDoc, collection, serverTimestamp } from 'firebase/firestore'
 import { db } from '../../lib/firebase.js'
 import { useAuth } from '../../context/AuthContext.jsx'
 import api from '../../lib/api.js'
+import ActionItems from '../../components/ActionItems.jsx'
 
 function ResumeBuilder() {
   const { currentUser } = useAuth()
@@ -36,6 +37,7 @@ function ResumeBuilder() {
         resume: data.resume,
         coverLetter: data.coverLetter,
         improvementNotes: data.improvementNotes,
+        actionItems: data.actionItems,
         createdAt: serverTimestamp(),
       })
     } catch (err) {
@@ -140,6 +142,8 @@ function ResumeBuilder() {
                 ))}
               </ul>
             </section>
+
+            <ActionItems items={result.actionItems} />
           </div>
         )}
       </main>

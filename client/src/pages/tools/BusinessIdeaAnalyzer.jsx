@@ -4,6 +4,7 @@ import { addDoc, collection, serverTimestamp } from 'firebase/firestore'
 import { db } from '../../lib/firebase.js'
 import { useAuth } from '../../context/AuthContext.jsx'
 import api from '../../lib/api.js'
+import ActionItems from '../../components/ActionItems.jsx'
 
 function ResultList({ title, items }) {
   return (
@@ -50,6 +51,7 @@ function BusinessIdeaAnalyzer() {
         weaknesses: data.weaknesses,
         competitiveRisks: data.competitiveRisks,
         nextSteps: data.nextSteps,
+        actionItems: data.actionItems,
         createdAt: serverTimestamp(),
       })
     } catch (err) {
@@ -137,6 +139,7 @@ function BusinessIdeaAnalyzer() {
             <ResultList title="Weaknesses" items={result.weaknesses} />
             <ResultList title="Competitive risks" items={result.competitiveRisks} />
             <ResultList title="Next steps" items={result.nextSteps} />
+            <ActionItems items={result.actionItems} />
           </div>
         )}
       </main>

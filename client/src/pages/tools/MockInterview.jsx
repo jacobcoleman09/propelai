@@ -4,6 +4,7 @@ import { addDoc, collection, serverTimestamp } from 'firebase/firestore'
 import { db } from '../../lib/firebase.js'
 import { useAuth } from '../../context/AuthContext.jsx'
 import api from '../../lib/api.js'
+import ActionItems from '../../components/ActionItems.jsx'
 
 function MockInterview() {
   const { currentUser } = useAuth()
@@ -52,6 +53,7 @@ function MockInterview() {
         jobRole,
         overallScore: data.overallScore,
         perAnswer: data.perAnswer,
+        actionItems: data.actionItems,
         createdAt: serverTimestamp(),
       })
     } catch (err) {
@@ -142,6 +144,8 @@ function MockInterview() {
                 <p className="mt-1 text-sm text-gray-800">{item.feedback}</p>
               </div>
             ))}
+
+            <ActionItems items={result.actionItems} />
           </div>
         )}
       </main>

@@ -56,14 +56,16 @@ router.post('/score', async (req, res) => {
 ${transcript}
 
 Score the candidate's overall performance from 1-10 based on clarity, depth, and quality of their answers.
-Also give specific feedback for each individual answer.
+Also give specific feedback for each individual answer, plus 2-3 concrete action items the candidate
+should do before their next interview (e.g. specific things to practice, stories to prepare, gaps to fix).
 
 Respond with JSON in exactly this shape:
 {
   "overallScore": 7,
   "perAnswer": [
     { "question": "...", "answer": "...", "score": 7, "feedback": "specific feedback for this answer" }
-  ]
+  ],
+  "actionItems": ["action item 1", "action item 2"]
 }`
 
   try {
