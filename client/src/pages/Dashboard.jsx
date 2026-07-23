@@ -1,4 +1,7 @@
+import { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
+import { collection, getDocs, orderBy, query } from 'firebase/firestore'
+import { db } from '../lib/firebase.js'
 import { useAuth } from '../context/AuthContext.jsx'
 
 const tools = [
@@ -19,10 +22,53 @@ const tools = [
   },
 ]
 
+const SESSION_META = {
+  resume: { label: 'Resume & Cover Letter', to: '/tools/resume' },
+  interview: { label: 'Mock Interview', to: '/tools/interview' },
+  'business-idea': { label: 'Business Idea Analysis', to: '/tools/business-idea' },
+}
+
+function sessionTitle(session) {
+  if (session.type === 'resume') {
+    return session.targetCompany
+      ? `${session.targetJobTitle} at ${session.targetCompany}`
+      : session.targetJobTitle
+  }
+  if (session.type === 'interview') {
+    return `${session.jobRole} — ${session.overallScore}/10`
+  }
+  if (session.type === 'business-idea') {
+    return session.ideaName
+  }
+  return 'Session'
+}
+
 function Dashboard() {
   const { currentUser, logout } = useAuth()
   const navigate = useNavigate()
-  const sessions = []
+  const [sessions, setSessions] = useState([])
+  const [loadingSessions, setLoadingSessions] = useState(true)
+
+  useEffect(() => {
+    if (!currentUser) return
+
+    const loadSessions = async () => {
+      try {
+        const q = query(
+          collection(db, 'users', currentUser.uid, 'sessions'),
+          orderBy('createdAt', 'desc'),
+        )
+        const snapshot = await getDocs(q)
+        setSessions(snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() })))
+      } catch (err) {
+        console.error('Failed to load sessions:', err)
+      } finally {
+        setLoadingSessions(false)
+      }
+    }
+
+    loadSessions()
+  }, [currentUser])
 
   const handleLogout = async () => {
     await logout()
@@ -70,14 +116,39 @@ function Dashboard() {
 
         <div className="mt-10">
           <h3 className="text-lg font-medium text-gray-900">Your sessions</h3>
-          {sessions.length === 0 ? (
+
+          {!loadingSessions && sessions.length === 0 && (
             <div className="mt-3 rounded-lg border border-dashed border-gray-300 p-8 text-center">
               <p className="text-gray-600">You haven't created any sessions yet.</p>
               <p className="mt-1 text-sm text-gray-500">
                 Pick a tool above to run your first one.
               </p>
             </div>
-          ) : null}
+          )}
+
+          {sessions.length > 0 && (
+            <div className="mt-3 space-y-3">
+              {sessions.map((session) => {
+                const meta = SESSION_META[session.type] || { label: 'Session', to: '/' }
+                const date = session.createdAt?.toDate
+                  ? session.createdAt.toDate().toLocaleDateString()
+                  : ''
+                return (
+                  <Link
+                    key={session.id}
+                    to={meta.to}
+                    className="block bg-white rounded-lg border border-gray-200 p-4 hover:border-indigo-400 hover:shadow transition"
+                  >
+                    <div className="flex items-center justify-between">
+                      <p className="font-medium text-gray-900">{sessionTitle(session)}</p>
+                      <span className="text-xs text-gray-500">{date}</span>
+                    </div>
+                    <p className="mt-1 text-sm text-gray-500">{meta.label}</p>
+                  </Link>
+                )
+              })}
+            </div>
+          )}
         </div>
       </main>
     </div>
